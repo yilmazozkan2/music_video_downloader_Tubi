@@ -1,1 +1,1 @@
-![Capture5](https://user-images.githubusercontent.com/52213548/228989630-b048472d-2428-46c1-9aee-0133007c707a.PNG)
+![Ekran görüntüsü 2023-05-24 170611](https://github.com/yilmazozkan2/music_video_downloader_Tubi/assets/52213548/5d167dcf-334b-40f0-a51c-79668332afcf)
