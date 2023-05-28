@@ -5,6 +5,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+//Widgets
+import '../widgets/build_snack_bar.dart';
+import '../widgets/download_container.dart';
+import '../widgets/input_field.dart';
+
 class MusicLinkPage extends StatefulWidget {
   const MusicLinkPage({Key? key}) : super(key: key);
 
@@ -13,17 +18,17 @@ class MusicLinkPage extends StatefulWidget {
 }
 
 class _MusicLinkPageState extends State<MusicLinkPage> {
-  TextEditingController _textController = new TextEditingController();
+  TextEditingController textController = new TextEditingController();
   String title = '';
   List link = [];
   String jsonsDataString = '';
   var jsonData;
   InterstitialAd? _interstitialAd;
 
-  // RAPIDAPI CONNECTİON
+  //CONNECTİON
   Future<http.Response> fetchapi() async {
     var url = Uri.parse(
-        "https://youtube-mp3-download1.p.rapidapi.com/dl?id=${_textController.text.substring(17, 28)}");
+        "https://youtube-mp3-download1.p.rapidapi.com/dl?id=${textController.text.substring(17, 28)}");
     var response = await http.get(url, headers: {
       'X-RapidAPI-Key': '40ec6fbcfemshb5562115e05973bp18c723jsn175e4908806a',
       'X-RapidAPI-Host': 'youtube-mp3-download1.p.rapidapi.com'
@@ -38,9 +43,8 @@ class _MusicLinkPageState extends State<MusicLinkPage> {
         print(link);
       });
     }
-    //gelen verileri gör
     print(response.body);
-    //gelen verileri kullan
+
     jsonsDataString = response.body.toString();
     jsonData = jsonDecode(jsonsDataString);
     return response;
@@ -54,20 +58,8 @@ class _MusicLinkPageState extends State<MusicLinkPage> {
           padding: ProjectDecorations.allPadding,
           child: Column(
             children: [
-              _inputFields(),
-              GestureDetector(
-                onTap: () async {
-                  if (_textController.text.isEmpty ||
-                      _textController.text == ' ') {
-                    buildShowSnackBar(context,'No music url',Colors.red, Colors.white);
-                  } else {
-                    fetchapi();
-                    await LoadInterstitialAd(context);
-                    buildShowSnackBar(context, 'After the ad is closed, the download window will open..', Colors.green, Colors.white);
-                  }
-                },
-                child: MusicDownloadContainer(context),
-              ),
+              InputField(textController: textController),
+              TapMusicDownloadHandler(context),
             ],
           ),
         ),
@@ -75,10 +67,29 @@ class _MusicLinkPageState extends State<MusicLinkPage> {
     );
   }
 
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> buildShowSnackBar(
-      BuildContext context, String msg, Color bgColor, Color textColor) {
-    return ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(msg,style: Theme.of(context).textTheme.bodyText1?.copyWith(color: textColor)),backgroundColor: bgColor,));
+  GestureDetector TapMusicDownloadHandler(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        if (textController.text.isEmpty || textController.text == ' ') {
+          BuildSnackBar(
+            context,
+            'No music url',
+            Colors.red,
+            Colors.white,
+          );
+        } else {
+          fetchapi();
+          await LoadInterstitialAd(context);
+          BuildSnackBar(
+            context,
+            'After the ad is closed, the download window will open..',
+            Colors.green,
+            Colors.white,
+          );
+        }
+      },
+      child: DownloadContainer(text: 'Music Download'),
+    );
   }
 
   LoadInterstitialAd(BuildContext context) async {
@@ -106,43 +117,5 @@ class _MusicLinkPageState extends State<MusicLinkPage> {
               });
             },
             onAdFailedToLoad: (LoadAdError error) {}));
-  }
-
-  Container MusicDownloadContainer(BuildContext context) {
-    return Container(
-      color: Colors.red,
-      margin: ProjectDecorations.onlyTopPadding,
-      width: MediaQuery.of(context).size.width,
-      padding: ProjectDecorations.allPadding,
-      alignment: Alignment.center,
-      child: Text(
-        "Mp3 Download",
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
-      ),
-    );
-  }
-
-  Padding _inputFields() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              cursorColor: Colors.red,
-              decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red)),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red)),
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red)),
-              ),
-              controller: _textController,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

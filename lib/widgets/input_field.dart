@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/padding.dart';
+import '../constants/padding.dart';
 
-class InputFields extends StatelessWidget {
+class InputField extends StatelessWidget {
   
-  InputFields({super.key, required this.textController,});
+  InputField({super.key, required this.textController,});
   TextEditingController textController = new TextEditingController();
 
   @override

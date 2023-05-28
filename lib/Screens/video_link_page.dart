@@ -7,10 +7,9 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 //Widgets
-import '../widgets/video_link_page/build_snack_bar.dart';
-import '../widgets/video_link_page/input_fields.dart';
-import '../widgets/video_link_page/quality18_download_container.dart';
-import '../widgets/video_link_page/video_download_container.dart';
+import '../widgets/build_snack_bar.dart';
+import '../widgets/download_container.dart';
+import '../widgets/input_field.dart';
 
 enum MenuItem { quality360, quality720 }
 
@@ -56,7 +55,7 @@ class _VideoLinkPageState extends State<VideoLinkPage> {
           padding: ProjectDecorations.allPadding,
           child: Column(
             children: [
-              InputFields(textController: textController),
+              InputField(textController: textController),
               GestureDetector(
                 onTap: () async {
                   if (textController.text.isEmpty ||
@@ -74,7 +73,7 @@ class _VideoLinkPageState extends State<VideoLinkPage> {
                     await lowDownload(context);
                   }
                 },
-                child: Quality18DownloadContainer(),
+                child: DownloadContainer(text: '360P Download',),
               ),
               GestureDetector(
                 onTap: () async {
@@ -92,7 +91,7 @@ class _VideoLinkPageState extends State<VideoLinkPage> {
                     await hdDownload(context);
                   }
                 },
-                child: VideoDownloadContainer(),
+                child: DownloadContainer(text: '720P Download',),
               ),
             ],
           ),
